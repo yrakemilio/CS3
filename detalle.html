@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comunidad SUTERM - Detalle del Negocio</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="site-header">
+        <div class="container">
+            <div class="header-content">
+                <div>
+                    <h1 class="app-title">COMUNIDAD SUTERM</h1>
+                    <p class="app-subtitle">Negocio de SUTERMISTAS para SUTERMISTAS</p>
+                </div>
+                <div>
+                    <a href="index.html" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left icon"></i>Volver al Directorio
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Aviso Legal -->
+    <div class="container">
+        <div class="legal-notice">
+            <small>
+                <i class="fas fa-balance-scale"></i>
+                Comunidad SUTERM - Directorio interno exclusivo para miembros. 
+                <a href="#modal-legal">Deslinde completo de responsabilidad</a>
+            </small>
+        </div>
+    </div>
+
+    <div class="container main-container">
+        <!-- Estados de carga -->
+        <div class="states" aria-live="polite">
+            <div id="detailLoading">
+                <i class="fas fa-spinner fa-spin"></i> Cargando información del negocio...
+            </div>
+            <div id="detailError" class="hidden">
+                <i class="fas fa-exclamation-triangle icon"></i>No se pudo cargar la información del negocio
+            </div>
+        </div>
+
+        <!-- Contenido del detalle -->
+        <article id="detail" class="hidden">
+            <!-- Header del detalle -->
+            <header class="detail-header">
+                <img id="detailLogo" class="detail-logo" alt="Logo del negocio" 
+                     onerror="this.src='https://placehold.co/300x300/800020/white?text=Sin+imagen'">
+                <div>
+                    <h2 id="detailName" class="detail-name"></h2>
+                    <p id="detailMeta" class="detail-meta"></p>
+                </div>
+            </header>
+
+            <!-- Descripción -->
+            <section class="detail-description">
+                <h3><i class="fas fa-align-left icon"></i>Descripción</h3>
+                <p id="detailDesc"></p>
+            </section>
+
+            <!-- Información de contacto -->
+            <section class="detail-contact">
+                <h3><i class="fas fa-address-card icon"></i>Información de Contacto</h3>
+                <div class="contact-info">
+                    <div id="detailWhatsApp" class="contact-item hidden">
+                        <i class="fab fa-whatsapp"></i>
+                        <a id="whatsappLink" target="_blank">Contactar por WhatsApp</a>
+                    </div>
+                    <div id="detailWeb" class="contact-item hidden">
+                        <i class="fas fa-globe"></i>
+                        <a id="webLink" target="_blank">Visitar sitio web</a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Galería de imágenes -->
+            <section class="detail-gallery">
+                <h3><i class="fas fa-images icon"></i>Galería</h3>
+                <div class="gallery" id="detailGallery">
+                    <!-- Las imágenes se cargarán dinámicamente -->
+                </div>
+            </section>
+
+            <!-- Botones de acción -->
+            <section class="detail-actions">
+                <a id="btnWhatsApp" class="btn" href="#" target="_blank">
+                    <i class="fab fa-whatsapp icon"></i>Contactar por WhatsApp
+                </a>
+                <a id="btnWeb" class="btn outline" href="#" target="_blank">
+                    <i class="fas fa-globe icon"></i>Visitar sitio web
+                </a>
+            </section>
+        </article>
+    </div>
+
+    <!-- Lightbox para galería -->
+    <div class="lightbox" id="lightbox">
+        <span class="lightbox-close" id="lightboxClose">&times;</span>
+        <div class="lightbox-nav">
+            <button id="lightboxPrev"><i class="fas fa-chevron-left"></i></button>
+            <button id="lightboxNext"><i class="fas fa-chevron-right"></i></button>
+        </div>
+        <img class="lightbox-content" id="lightboxImage" src="" alt="">
+    </div>
+
+    <!-- Modal Legal -->
+    <div id="modal-legal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-gavel"></i> Aviso Legal - Comunidad SUTERM</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="legal-section">
+                    <h4>Naturaleza del Servicio</h4>
+                    <p><strong>Comunidad SUTERM</strong> es un espacio interno de difusión exclusivo para miembros del 
+                    Sindicato Único de Trabajadores Electricistas de la República Mexicana (SUTERM), destinado únicamente 
+                    a la promoción de productos y servicios ofrecidos de manera independiente por los compañeros.</p>
+                </div>
+
+                <div class="legal-section">
+                    <h4>Limitación de Responsabilidad</h4>
+                    <p>La administración del directorio actúa únicamente como facilitador del espacio de difusión y 
+                    <strong>no interviene ni garantiza</strong>:</p>
+                    <ul>
+                        <li>Transacciones entre miembros</li>
+                        <li>Cobros, entrega de bienes o servicios</li>
+                        <li>Legalidad o idoneidad de productos/servicios</li>
+                        <li>Calidad o veracidad de la información publicada</li>
+                    </ul>
+                </div>
+
+                <div class="legal-section">
+                    <h4>Responsabilidad del Usuario</h4>
+                    <p>Cada compañero es <strong>responsable exclusivo</strong> de:</p>
+                    <ul>
+                        <li>Cumplir con disposiciones legales y fiscales aplicables en México</li>
+                        <li>Inscripción ante el SAT y emisión de comprobantes fiscales</li>
+                        <li>Abstenerse de ofrecer productos o servicios ilegales o prohibidos</li>
+                        <li>Respetar derechos de propiedad intelectual y de terceros</li>
+                        <li>Verificar la legitimidad de transacciones comerciales</li>
+                    </ul>
+                </div>
+
+                <div class="legal-section">
+                    <h4>Deslinde Expreso</h4>
+                    <p>La administración <strong>no asume responsabilidad</strong> de tipo:</p>
+                    <ul>
+                        <li><strong>Civil</strong> - Por daños y perjuicios entre miembros</li>
+                        <li><strong>Mercantil</strong> - Por incumplimiento de acuerdos comerciales</li>
+                        <li><strong>Fiscal</strong> - Por obligaciones tributarias no cumplidas</li>
+                        <li><strong>Penal</strong> - Por actividades ilícitas realizadas por miembros</li>
+                    </ul>
+                </div>
+
+                <div class="legal-acceptance">
+                    <p><strong>⚠️ ACEPTACIÓN EXPRESA:</strong> El uso del directorio implica la aceptación de este deslinde, 
+                    eximiendo a la administración de cualquier responsabilidad frente a terceros. La participación en 
+                    Comunidad SUTERM es voluntaria y bajo exclusiva responsabilidad de cada compañero.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-content">
+                <small>© 2023 Comunidad SUTERM. Todos los derechos reservados.</small>
+                <div class="social-links">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="detalle.js"></script>
+</body>
+</html>
