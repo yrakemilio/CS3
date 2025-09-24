@@ -163,18 +163,78 @@ document.addEventListener("DOMContentLoaded", () => {
   $("#seccion").addEventListener("change", renderList);
   $("#ciudad").addEventListener("change", renderList);
   $("#categoria").addEventListener("change", renderList);
-
-  // Funcionalidad del modal legal
-  const modal = document.getElementById("legalNotice");
-  const btn = document.getElementById("closeNotice");
-  
-  btn.addEventListener("click", () => {
-    modal.style.display = "none";
-  });
-
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") {
-      modal.style.display = "none";
-    }
-  });
 });
+
+// Anuncio
+function saveAnnounce(data) {
+  localStorage.setItem("suterm_announcement", JSON.stringify(data));
+}
+function getAnnounce() {
+  const raw = localStorage.getItem("suterm_announcement");
+  try {
+    return JSON.parse(raw);
+  } catch (e) {
+    return null;
+  }
+}
+function clearAnnounce() {
+  localStorage.removeItem("suterm_announcement");
+}
+function renderAnnounce() {
+  const box = $("#announcementSection");
+  const a = getAnnounce();
+  if (a) {
+    box.classList.remove("hidden");
+    $("#annTitle").textContent = a.title || "";
+    $("#annDesc").textContent = a.desc || "";
+    if (a.img) {
+      $("#announceImg").src = a.img;
+    }
+  } else {
+    box.classList.add("hidden");
+  }
+}
+function setupAnnounce() {
+  const form = document.getElementById("announceForm");
+  const btnDelete = document.getElementById("annDelete");
+  if (form) {
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const title = document.getElementById("annTitleInput").value.trim();
+      const desc = document.getElementById("annDescInput").value.trim();
+      const file = document.getElementById("annImageInput").files[0];
+      if (!title || !desc) {
+        alert("Título y descripción son obligatorios.");
+        return;
+      }
+      let img64 = null;
+      if (file) {
+        img64 = await new Promise((resolve, reject) => {
+          const fr = new FileReader();
+          fr.onload = () => resolve(fr.result);
+          fr.onerror = reject;
+          fr.readAsDataURL(file);
+        });
+      }
+      saveAnnounce({
+        title,
+        desc,
+        img: img64
+      });
+      renderAnnounce();
+      alert("Anuncio guardado.");
+    });
+  }
+  if (btnDelete) {
+    btnDelete.addEventListener("click", () => {
+      if (confirm("¿Eliminar el anuncio actual?")) {
+        clearAnnounce();
+        renderAnnounce();
+        document.getElementById("annImageInput").value = "";
+      }
+    });
+  }
+  renderAnnounce();
+}
+
+document.addEventListener("DOMContentLoaded", setupAnnounce);
