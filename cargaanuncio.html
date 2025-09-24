@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Comunidad SUTERM — Subir Anuncio</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="index.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <h1 class="app-title">COMUNIDAD SUTERM</h1>
+      <a class="back-link" href="index.html">← Volver al Directorio</a>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="announcement-form">
+      <h4>Subir Anuncio</h4>
+      <div class="form-group">
+        <label for="announcementImage">Imagen</label>
+        <input type="file" id="announcementImage" accept="image/*" class="form-control">
+      </div>
+      <div class="form-group">
+        <label for="announcementTitle">Título</label>
+        <input type="text" id="announcementTitle" class="form-control" placeholder="Título del anuncio">
+      </div>
+      <div class="form-group">
+        <label for="announcementDesc">Descripción</label>
+        <textarea id="announcementDesc" class="form-control" placeholder="Descripción del anuncio"></textarea>
+      </div>
+      <div class="form-actions">
+        <button id="saveAnnouncementBtn" class="btn btn-sm">Guardar</button>
+        <button id="clearAnnouncementBtn" class="btn btn-sm">Limpiar</button>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container"><small>© Comunidad SUTERM</small></div>
+  </footer>
+</body>
+</html>
