@@ -2,7 +2,7 @@
 // =====================
 // CONFIGURACIÓN GOOGLE SHEETS
 // =====================
-const BUSINESS_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRM9140leocSHNEKxfzFonrlEQdLGklsM3hXBZ_iiwdS4CwsDLeRI-w8c7RjkoqsITvrCCqgYku46-8/pub?output=csv";
+const BUSINESS_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQS0ZzlICmlRCsrt3V7I2DizA0RceOxIHVzvMhz8bAHaG31gKRFY2hUF0kJbyE755k-ImXzmkPRuyfc/pub?gid=0&single=true&output=csv";
 let BUSINESS_DATA = [];
 
 // =====================
