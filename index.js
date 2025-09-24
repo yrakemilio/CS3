@@ -1,26 +1,25 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+import { getFirestore, collection, query, onSnapshot, addDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
 // Google Sheet publicado en CSV
-// ⚠️ Cambia por tu URL pública CSV
-const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQS0ZzlICmlRCsrt3V7I2DizA0RceOxIHVzvMhz8bAHaG31gKRFY2hUF0kJbyE755k-ImXzmkPRuyfc/pub?gid=0&single=true&output=csv";
+const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTBAuMdD25rU-PCyLnn_6nOeb_NHRQtOHglGFL2QqMN7BD98JmWvJ1O2o6LkOjhwP0KCxYzTY_V3u9R/pub?gid=0&single=true&output=csv";
 
 let DATA = [];
 let FILTERS = { q: "", seccion: "", ciudad: "", categoria: "" };
+let ANNOUNCEMENTS = [];
+let userId = null;
+let db = null;
+let auth = null;
 
 const $ = (sel) => document.querySelector(sel);
 const $$ = (sel) => document.querySelectorAll(sel);
 
 function parseCSV(text) {
   const rows = [];
-  let row = [],
-    cur = '',
-    inQ = false;
-  const pushCell = () => {
-    row.push(cur);
-    cur = '';
-  };
-  const pushRow = () => {
-    rows.push(row);
-    row = [];
-  };
+  let row = [], cur = '', inQ = false;
+  const pushCell = () => { row.push(cur); cur = ''; };
+  const pushRow = () => { rows.push(row); row = []; };
 
   for (let i = 0; i < text.length; i++) {
     const c = text[i];
@@ -51,31 +50,29 @@ function parseCSV(text) {
     .map((r, i) => {
       const o = {};
       headers.forEach((h, idx) => o[h] = String(r[idx] || '').trim());
-      // Si no existe columna id, generamos uno automático
       if (!o.id) o.id = i + 1;
       return o;
     });
 }
 
-function renderCards(items) {
-  $("#results").innerHTML = items.map(it => `
-    <article class="card">
-      ${it.logo ? `<img class="card-logo" src="${it.logo}" alt="Logo ${it.nombre}">` : ''}
+function renderCards(list) {
+  const html = list.map(r => `
+    <a href="detalle.html?id=${r.id}" class="card">
+      <img src="${r.logo || 'https://placehold.co/76x76/fafafa/6b7280?text=Logo'}" class="card-logo" alt="Logo de ${r.nombre}" />
       <div class="card-body">
-        <h3 class="card-title">${it.nombre || "Sin nombre"}</h3>
-        <p class="card-meta">${[it.categoria, it.ciudad, it.seccion].filter(Boolean).join(" • ")}</p>
-        <p class="card-desc">${(it.descripcion || "").slice(0, 120)}…</p>
-        <a class="card-link" href="detalle.html?id=${it.id}">Ver más</a>
+        <h3 class="card-title">${r.nombre}</h3>
+        <p class="card-meta">${[r.categoria, r.ciudad, r.seccion].filter(Boolean).join(" • ")}</p>
+        <p class="card-desc">${r.descripcion}</p>
       </div>
-    </article>
+    </a>
   `).join("");
+  $("#results").innerHTML = html;
 }
 
-// Llenar dinámicamente los selectores de los filtros
 function populateFilters() {
-  const secciones = [...new Set(DATA.map(d => d.seccion))].filter(Boolean);
-  const ciudades = [...new Set(DATA.map(d => d.ciudad))].filter(Boolean);
-  const categorias = [...new Set(DATA.map(d => d.categoria))].filter(Boolean);
+  const secciones = [...new Set(DATA.map(r => r.seccion))].filter(Boolean).sort();
+  const ciudades = [...new Set(DATA.map(r => r.ciudad))].filter(Boolean).sort();
+  const categorias = [...new Set(DATA.map(r => r.categoria))].filter(Boolean).sort();
 
   const renderOptions = (items, id) => {
     const selector = $(`#${id}`);
@@ -91,139 +88,194 @@ function applyFilters() {
   const q = FILTERS.q.toLowerCase();
   let list = DATA.filter(r => {
     return (!q ||
-        (r.nombre || "").toLowerCase().includes(q) ||
-        (r.descripcion || "").toLowerCase().includes(q)) &&
+      (r.nombre || "").toLowerCase().includes(q) ||
+      (r.descripcion || "").toLowerCase().includes(q)) &&
       (!FILTERS.seccion || r.seccion === FILTERS.seccion) &&
       (!FILTERS.ciudad || r.ciudad === FILTERS.ciudad) &&
       (!FILTERS.categoria || r.categoria === FILTERS.categoria);
   });
-  $("#empty").classList.add("hidden");
-  $("#noResults").classList.toggle("hidden", list.length !== 0);
+  const empty = $("#empty");
+  if (empty) empty.classList.add("hidden");
+  const noResults = $("#noResults");
+  if (noResults) noResults.classList.toggle("hidden", list.length !== 0);
   renderCards(list);
 }
 
+// Function to render announcements
+function renderAnnouncements() {
+  const announcementCards = $("#announcementCards");
+  if (announcementCards) { // Se asegura de que el elemento exista antes de intentar renderizar
+    announcementCards.innerHTML = ANNOUNCEMENTS.map(announcement => `
+      <div class="announcement-card">
+        <div class="announcement-media">
+          <img src="${announcement.imageUrl}" alt="Anuncio: ${announcement.title}">
+        </div>
+        <div class="announcement-content">
+          <h4>${announcement.title}</h4>
+          <p>${announcement.description}</p>
+        </div>
+        <div class="announcement-actions">
+          <button class="delete-btn" data-id="${announcement.id}">Eliminar</button>
+        </div>
+      </div>
+    `).join("");
+
+    // Attach event listeners to delete buttons
+    $$(".delete-btn").forEach(btn => {
+      btn.addEventListener("click", async (e) => {
+        const id = e.target.dataset.id;
+        if (confirm("¿Estás seguro de que quieres eliminar este anuncio?")) {
+          await deleteAnnouncement(id);
+        }
+      });
+    });
+  }
+}
+
+async function saveAnnouncement() {
+  const imageFile = $("#announcementImage").files[0];
+  const title = $("#announcementTitle").value;
+  const description = $("#announcementDesc").value;
+
+  if (!imageFile || !title || !description) {
+    alert("Por favor, rellena todos los campos para subir un anuncio.");
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = async (e) => {
+    const imageUrl = e.target.result;
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+    const announcementsCollectionRef = collection(db, `artifacts/${appId}/public/data/announcements`);
+    await addDoc(announcementsCollectionRef, {
+      imageUrl,
+      title,
+      description,
+      userId: userId,
+      createdAt: new Date()
+    });
+    alert("Anuncio guardado con éxito.");
+    clearForm();
+  };
+  reader.readAsDataURL(imageFile);
+}
+
+async function deleteAnnouncement(id) {
+  const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+  const announcementDocRef = doc(db, `artifacts/${appId}/public/data/announcements`, id);
+  await deleteDoc(announcementDocRef);
+  alert("Anuncio eliminado con éxito.");
+}
+
+function clearForm() {
+  const formImage = $("#announcementImage");
+  const formTitle = $("#announcementTitle");
+  const formDesc = $("#announcementDesc");
+  if (formImage) formImage.value = "";
+  if (formTitle) formTitle.value = "";
+  if (formDesc) formDesc.value = "";
+}
+
 async function loadData() {
-  $("#loading").classList.remove("hidden");
+  const loading = $("#loading");
+  if (loading) loading.classList.remove("hidden");
   try {
     const res = await fetch(SHEET_CSV_URL);
     const text = await res.text();
     DATA = parseCSV(text);
     populateFilters();
-    $("#loading").classList.add("hidden");
-    // Mostrar todos al inicio
+    if (loading) loading.classList.add("hidden");
     applyFilters();
   } catch (e) {
     console.error(e);
-    $("#loading").classList.add("hidden");
-    $("#error").classList.remove("hidden");
+    if (loading) loading.classList.add("hidden");
+    const error = $("#error");
+    if (error) error.classList.remove("hidden");
   }
 }
 
-// Lógica de anuncios
-function saveAnnounce(data) {
-  localStorage.setItem("suterm_announcement", JSON.stringify(data));
-}
-function getAnnounce() {
-  const raw = localStorage.getItem("suterm_announcement");
-  try {
-    return JSON.parse(raw);
-  } catch (e) {
-    return null;
-  }
-}
-function clearAnnounce() {
-  localStorage.removeItem("suterm_announcement");
-}
-function renderAnnounce() {
-  const box = $("#announcementList");
-  const noAnnouncements = $("#noAnnouncements");
-  const a = getAnnounce();
-  if (a) {
-    box.innerHTML = `
-      <div class="announcement-card">
-        ${a.img ? `<div class="announcement-media"><img src="${a.img}" alt="Imagen del anuncio"></div>` : ''}
-        <div class="announcement-content">
-          <h4>${a.title}</h4>
-          <p>${a.desc}</p>
-        </div>
-      </div>
-    `;
-    box.classList.remove("hidden");
-    noAnnouncements.classList.add("hidden");
+// Initializing Firebase
+document.addEventListener("DOMContentLoaded", async () => {
+  const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+  const app = initializeApp(firebaseConfig);
+  db = getFirestore(app);
+  auth = getAuth(app);
+
+  const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+  if (initialAuthToken) {
+    await signInWithCustomToken(auth, initialAuthToken);
   } else {
-    box.innerHTML = '';
-    box.classList.add("hidden");
-    noAnnouncements.classList.remove("hidden");
+    await signInAnonymously(auth);
   }
-}
-async function setupAnnounce() {
-  const form = document.getElementById("announcementForm");
-  const btnDelete = document.getElementById("annDelete");
-  if (form) {
-    form.addEventListener("submit", async(e) => {
-      e.preventDefault();
-      const title = document.getElementById("annTitleInput").value.trim();
-      const desc = document.getElementById("annDescInput").value.trim();
-      const file = document.getElementById("annImageInput").files[0];
-      if (!title || !desc) {
-        alert("Título y descripción son obligatorios.");
-        return;
-      }
-      let img64 = null;
-      if (file) {
-        img64 = await new Promise((resolve, reject) => {
-          const fr = new FileReader();
-          fr.onload = () => resolve(fr.result);
-          fr.onerror = reject;
-          fr.readAsDataURL(file);
-        });
-      }
-      saveAnnounce({
-        title,
-        desc,
-        img: img64
-      });
-      renderAnnounce();
-      alert("Anuncio guardado.");
-    });
-  }
-  if (btnDelete) {
-    btnDelete.addEventListener("click", () => {
-      if (confirm("¿Eliminar el anuncio actual?")) {
-        clearAnnounce();
-        renderAnnounce();
-        document.getElementById("annImageInput").value = "";
-      }
-    });
-  }
-  renderAnnounce();
-}
 
-document.addEventListener("DOMContentLoaded", () => {
-  // Inicialización del modal legal
-  const modal = $("#legalNotice");
-  const btn = $("#closeNotice");
-  if (modal && btn) {
-    btn.addEventListener("click", () => {
-      modal.style.display = "none";
-    });
-  }
-  
-  // Lógica principal
+  onAuthStateChanged(auth, user => {
+    if (user) {
+      userId = user.uid;
+      const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+      const q = query(collection(db, `artifacts/${appId}/public/data/announcements`));
+      onSnapshot(q, (querySnapshot) => {
+        ANNOUNCEMENTS = [];
+        querySnapshot.forEach((doc) => {
+          ANNOUNCEMENTS.push({ id: doc.id, ...doc.data() });
+        });
+        renderAnnouncements();
+      });
+    }
+  });
+
   loadData();
-  
-  // Lógica de búsqueda y filtros
-  $("#btnBuscar").addEventListener("click", () => {
+});
+
+// Event listeners for index.html (solo si existen)
+const btnBuscar = $("#btnBuscar");
+if (btnBuscar) {
+  btnBuscar.addEventListener("click", () => {
     FILTERS.q = $("#q").value;
     applyFilters();
   });
-  ["seccion", "ciudad", "categoria"].forEach(id => {
-    $("#" + id).addEventListener("change", e => {
-      FILTERS[id] = e.target.value;
-      applyFilters();
-    });
-  });
+}
 
-  // Lógica de anuncios
-  setupAnnounce();
-});
+const qInput = $("#q");
+if (qInput) {
+  qInput.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") {
+      FILTERS.q = $("#q").value;
+      applyFilters();
+    }
+  });
+}
+
+const seccionSelect = $("#seccion");
+if (seccionSelect) {
+  seccionSelect.addEventListener("change", (e) => {
+    FILTERS.seccion = e.target.value;
+    applyFilters();
+  });
+}
+
+const ciudadSelect = $("#ciudad");
+if (ciudadSelect) {
+  ciudadSelect.addEventListener("change", (e) => {
+    FILTERS.ciudad = e.target.value;
+    applyFilters();
+  });
+}
+
+const categoriaSelect = $("#categoria");
+if (categoriaSelect) {
+  categoriaSelect.addEventListener("change", (e) => {
+    FILTERS.categoria = e.target.value;
+    applyFilters();
+  });
+}
+
+// Event listeners para cargaanuncio.html (solo si existen)
+const saveBtn = $("#saveAnnouncementBtn");
+if (saveBtn) {
+  saveBtn.addEventListener("click", saveAnnouncement);
+}
+
+const clearBtn = $("#clearAnnouncementBtn");
+if (clearBtn) {
+  clearBtn.addEventListener("click", clearForm);
+}
