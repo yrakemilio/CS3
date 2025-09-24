@@ -1,220 +1,104 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Comunidad SUTERM - Directorio</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Comunidad SUTERM — Directorio</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="index.js" defer></script>
+  <style>
+    /* Modal legal */
+    .legal-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+    .legal-box {
+      background: #fff;
+      padding: 20px;
+      max-width: 500px;
+      border-radius: 12px;
+      text-align: center;
+    }
+    .legal-box h2 { margin-top: 0; }
+    .legal-box button {
+      margin-top: 12px;
+      padding: 10px 18px;
+      border: none;
+      border-radius: 8px;
+      background: var(--cta);
+      color: var(--cta-ink);
+      font-weight: 600;
+      cursor: pointer;
+      transition: filter 0.2s;
+    }
+    .legal-box button:hover { filter: brightness(1.05); }
+  </style>
 </head>
 <body>
-    <!-- Header -->
-    <header class="site-header">
-        <div class="container">
-            <div class="header-content">
-                <div>
-                    <h1 class="app-title">COMUNIDAD SUTERM</h1>
-                    <p class="app-subtitle">Negocio de SUTERMISTAS para SUTERMISTAS</p>
-                </div>
-                <div>
-                    <button class="btn btn-secondary" id="btnNewAnnouncement">
-                        <i class="fas fa-plus icon"></i>Nuevo Anuncio
-                    </button>
-                </div>
-            </div>
-        </div>
-    </header>
 
-    <!-- Aviso Legal -->
+  <div id="legalNotice" class="legal-modal">
+    <div class="legal-box">
+      <h2>⚠️ Aviso de Deslinde de responsabilidad </h2>
+      <p>
+        La Comunidad SUTERM, así como el Sindicato Único de Trabajadores Electricistas de la República Mexicana (SUTERM), actúan únicamente como plataformas de promoción y difusión de los negocios, servicios y actividades de sus agremiados.
+
+Se deslindan expresamente de cualquier responsabilidad legal, fiscal, civil o penal que pueda derivarse del uso, contratación, adquisición o consumo de los productos y servicios ofrecidos por los agremiados a través de esta comunidad.
+
+Toda relación comercial, contractual o transacción que se lleve a cabo entre los usuarios y los agremiados es estrictamente responsabilidad de las partes involucradas. La Comunidad SUTERM y el SUTERM no garantizan la legalidad, calidad, seguridad, cumplimiento fiscal ni cumplimiento normativo de los negocios promocionados.
+
+Al acceder y utilizar esta plataforma, usted reconoce y acepta que cualquier acción relacionada con los productos o servicios ofrecidos por los agremiados se realiza bajo su propio riesgo y responsabilidad, eximiendo a la Comunidad SUTERM y al SUTERM de cualquier reclamación, demanda o contingencia legal.
+      </p>
+      <button id="closeNotice">Aceptar</button>
+    </div>
+  </div>
+
+  <header class="site-header">
     <div class="container">
-        <div class="legal-notice">
-            <small>
-                <i class="fas fa-balance-scale"></i>
-                Comunidad SUTERM - Directorio interno exclusivo para miembros. 
-                <a href="#modal-legal" id="legalLink">Deslinde completo de responsabilidad</a>
-            </small>
-        </div>
+      <h1 class="app-title">COMUNIDAD SUTERM</h1>
+      <p class="app-subtitle">Negocio de SUTERMISTAS para SUTERMISTAS</p>
     </div>
+  </header>
 
-    <div class="container main-container">
-        <div class="main-content">
-            <!-- Sección de Anuncios -->
-            <aside class="announcements-sidebar">
-                <h2 class="section-title"><i class="fas fa-bullhorn"></i> Anuncio Destacado</h2>
-                
-                <!-- Formulario para nuevos anuncios -->
-                <div class="announcement-form hidden" id="announcementForm">
-                    <h3>Crear Nuevo Anuncio</h3>
-                    <div class="form-group">
-                        <label for="announcementTitle">Título del anuncio</label>
-                        <input type="text" id="announcementTitle" class="form-control" placeholder="Ej: Promoción especial">
-                    </div>
-                    <div class="form-group">
-                        <label for="announcementContent">Contenido del anuncio</label>
-                        <textarea id="announcementContent" class="form-control" placeholder="Describe tu anuncio aquí..."></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="announcementMedia">Imagen o Video (opcional)</label>
-                        <input type="file" id="announcementMedia" class="form-control" accept="image/*,video/*">
-                    </div>
-                    <div class="form-actions">
-                        <button class="btn" id="btnPublish">
-                            <i class="fas fa-paper-plane icon"></i>Publicar Anuncio
-                        </button>
-                        <button class="btn btn-secondary" id="btnCancel">
-                            <i class="fas fa-times icon"></i>Cancelar
-                        </button>
-                    </div>
-                </div>
-                
-                <!-- Espacio para UN solo anuncio -->
-                <div class="announcement-list" id="announcementList">
-                    <div class="no-announcement" id="noAnnouncement">
-                        <i class="fas fa-bullhorn"></i>
-                        <p>No hay anuncios activos</p>
-                        <p>Haz clic en "Nuevo Anuncio" para crear uno</p>
-                    </div>
-                </div>
-            </aside>
-
-            <!-- Contenido Principal -->
-            <main class="content-main">
-                <section class="search-bar">
-                    <div class="search-row">
-                        <input id="q" type="search" placeholder="Buscar por nombre, categoría o descripción…" autocomplete="off" />
-                        <button id="btnBuscar" class="btn">
-                            <i class="fas fa-search icon"></i>Buscar
-                        </button>
-                    </div>
-
-                    <div class="filters">
-                        <div class="filter">
-                            <label for="seccion"><i class="fas fa-map-marker-alt icon"></i>Sección</label>
-                            <select id="seccion">
-                                <option value="">Todas las secciones</option>
-                            </select>
-                        </div>
-                        <div class="filter">
-                            <label for="ciudad"><i class="fas fa-city icon"></i>Ciudad</label>
-                            <select id="ciudad">
-                                <option value="">Todas las ciudades</option>
-                            </select>
-                        </div>
-                        <div class="filter">
-                            <label for="categoria"><i class="fas fa-tag icon"></i>Categoría</label>
-                            <select id="categoria">
-                                <option value="">Todas las categorías</option>
-                            </select>
-                        </div>
-                    </div>
-                </section>
-
-                <section class="states" aria-live="polite">
-                    <div id="loading" class="hidden">
-                        <i class="fas fa-spinner fa-spin"></i> Cargando negocios...
-                    </div>
-                    <div id="empty">
-                        <i class="fas fa-search icon"></i>Empieza buscando o usando los filtros
-                    </div>
-                    <div id="noResults" class="hidden">
-                        <i class="fas fa-exclamation-circle icon"></i>No se encontraron resultados
-                    </div>
-                    <div id="error" class="hidden">
-                        <i class="fas fa-exclamation-triangle icon"></i>Error al cargar los datos
-                    </div>
-                </section>
-
-                <section class="results" id="results">
-                    <!-- Los resultados se cargarán dinámicamente -->
-                </section>
-            </main>
+  <main class="container">
+    <section class="search-bar">
+      <div class="search-row">
+        <input id="q" type="search" placeholder="Buscar por nombre o descripción…" autocomplete="off" />
+        <button id="btnBuscar">Buscar</button>
+      </div>
+      <div class="filters">
+        <div class="filter">
+          <label for="seccion">Sección</label>
+          <select id="seccion"><option value="">Todas</option></select>
         </div>
-    </div>
-
-    <!-- Lightbox para galería -->
-    <div class="lightbox" id="lightbox">
-        <span class="lightbox-close" id="lightboxClose">&times;</span>
-        <div class="lightbox-nav">
-            <button id="lightboxPrev"><i class="fas fa-chevron-left"></i></button>
-            <button id="lightboxNext"><i class="fas fa-chevron-right"></i></button>
+        <div class="filter">
+          <label for="ciudad">Ciudad</label>
+          <select id="ciudad"><option value="">Todas</option></select>
         </div>
-        <img class="lightbox-content" id="lightboxImage" src="" alt="">
-        <video class="lightbox-content" id="lightboxVideo" controls style="display: none;"></video>
-    </div>
-
-    <!-- Modal Legal -->
-    <div id="modal-legal" class="modal hidden">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3><i class="fas fa-gavel"></i> Aviso Legal - Comunidad SUTERM</h3>
-                <button class="modal-close">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="legal-section">
-                    <h4>Naturaleza del Servicio</h4>
-                    <p><strong>Comunidad SUTERM</strong> es un espacio interno de difusión exclusivo para miembros del 
-                    Sindicato Único de Trabajadores Electricistas de la República Mexicana (SUTERM), destinado únicamente 
-                    a la promoción de productos y servicios ofrecidos de manera independiente por los compañeros.</p>
-                </div>
-
-                <div class="legal-section">
-                    <h4>Limitación de Responsabilidad</h4>
-                    <p>La administración del directorio actúa únicamente como facilitador del espacio de difusión y 
-                    <strong>no interviene ni garantiza</strong>:</p>
-                    <ul>
-                        <li>Transacciones entre miembros</li>
-                        <li>Cobros, entrega de bienes o servicios</li>
-                        <li>Legalidad o idoneidad de productos/servicios</li>
-                        <li>Calidad o veracidad de la información publicada</li>
-                    </ul>
-                </div>
-
-                <div class="legal-section">
-                    <h4>Responsabilidad del Usuario</h4>
-                    <p>Cada compañero es <strong>responsable exclusivo</strong> de:</p>
-                    <ul>
-                        <li>Cumplir con disposiciones legales y fiscales aplicables en México</li>
-                        <li>Inscripción ante el SAT y emisión de comprobantes fiscales</li>
-                        <li>Abstenerse de ofrecer productos o servicios ilegales o prohibidos</li>
-                        <li>Respetar derechos de propiedad intelectual y de terceros</li>
-                        <li>Verificar la legitimidad de transacciones comerciales</li>
-                    </ul>
-                </div>
-
-                <div class="legal-section">
-                    <h4>Deslinde Expreso</h4>
-                    <p>La administración <strong>no asume responsabilidad</strong> de tipo:</p>
-                    <ul>
-                        <li><strong>Civil</strong> - Por daños y perjuicios entre miembros</li>
-                        <li><strong>Mercantil</strong> - Por incumplimiento de acuerdos comerciales</li>
-                        <li><strong>Fiscal</strong> - Por obligaciones tributarias no cumplidas</li>
-                        <li><strong>Penal</strong> - Por actividades ilícitas realizadas por miembros</li>
-                    </ul>
-                </div>
-
-                <div class="legal-acceptance">
-                    <p><strong>⚠️ ACEPTACIÓN EXPRESA:</strong> El uso del directorio implica la aceptación de este deslinde, 
-                    eximiendo a la administración de cualquier responsabilidad frente a terceros. La participación en 
-                    Comunidad SUTERM es voluntaria y bajo exclusiva responsabilidad de cada compañero.</p>
-                </div>
-            </div>
+        <div class="filter">
+          <label for="categoria">Categoría</label>
+          <select id="categoria"><option value="">Todas</option></select>
         </div>
-    </div>
+      </div>
+    </section>
 
-    <!-- Footer -->
-    <footer class="site-footer">
-        <div class="container">
-            <div class="footer-content">
-                <small>© 2023 Comunidad SUTERM. Todos los derechos reservados.</small>
-                <div class="social-links">
-                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
-                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                </div>
-            </div>
-        </div>
-    </footer>
+    <section class="states" aria-live="polite">
+      <div id="loading" class="hidden">Cargando…</div>
+      <div id="empty">Empieza buscando o usando los filtros.</div>
+      <div id="noResults" class="hidden">No se encontraron resultados.</div>
+      <div id="error" class="hidden">Error al cargar los datos.</div>
+    </section>
 
-    <script src="index.js"></script>
+    <section class="results" id="results"></section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container"><small>© Comunidad SUTERM</small></div>
+  </footer>
+
 </body>
 </html>
