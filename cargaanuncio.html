@@ -3,42 +3,87 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Comunidad SUTERM — Subir Anuncio</title>
+  <title>Comunidad SUTERM — Cargar Anuncio</title>
   <link rel="stylesheet" href="style.css">
-  <script src="index.js" defer></script>
 </head>
 <body>
+
   <header class="site-header">
     <div class="container">
       <h1 class="app-title">COMUNIDAD SUTERM</h1>
-      <a class="back-link" href="index.html">← Volver al Directorio</a>
+      <a class="back-link" href="index.html">← Volver</a>
     </div>
   </header>
 
-  <main class="container">
-    <div class="announcement-form">
-      <h4>Subir Anuncio</h4>
-      <div class="form-group">
-        <label for="announcementImage">Imagen</label>
-        <input type="file" id="announcementImage" accept="image/*" class="form-control">
-      </div>
-      <div class="form-group">
-        <label for="announcementTitle">Título</label>
-        <input type="text" id="announcementTitle" class="form-control" placeholder="Título del anuncio">
-      </div>
-      <div class="form-group">
-        <label for="announcementDesc">Descripción</label>
-        <textarea id="announcementDesc" class="form-control" placeholder="Descripción del anuncio"></textarea>
-      </div>
-      <div class="form-actions">
-        <button id="saveAnnouncementBtn" class="btn btn-sm">Guardar</button>
-        <button id="clearAnnouncementBtn" class="btn btn-sm">Limpiar</button>
-      </div>
+  <main class="container main-content">
+    <section class="announcements-form-section">
+      <h2 class="section-title">Anuncios</h2>
+      
+      <form id="announcementForm" class="announcement-form">
+        <div class="form-group">
+          <label for="annTitleInput">Título del anuncio</label>
+          <input type="text" id="annTitleInput" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label for="annDescInput">Descripción</label>
+          <textarea id="annDescInput" class="form-control" rows="3" required></textarea>
+        </div>
+        <div class="form-group">
+          <label for="annImageInput">Imagen (URL)</label>
+          <input type="url" id="annImageInput" class="form-control" placeholder="Ej: https://ejemplo.com/imagen.jpg">
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-sm">Guardar Anuncio</button>
+          <button type="button" id="annDelete" class="btn btn-sm btn-danger">Eliminar</button>
+        </div>
+      </form>
+    </section>
+
+    <div id="resultMessage" class="hidden" style="margin-top: 20px; text-align: center;">
+      <p>¡Listo! Haz clic en el siguiente enlace para guardar el anuncio.</p>
+      <a id="sheetLink" class="btn btn-sm" href="#" target="_blank" style="margin-top: 10px;">Abrir Google Form</a>
     </div>
+
   </main>
 
   <footer class="site-footer">
     <div class="container"><small>© Comunidad SUTERM</small></div>
   </footer>
+
+  <script src="cargaanuncio.js" defer></script>
+  <style>
+    .announcements-form-section {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 20px;
+      max-width: 600px;
+      margin: 24px auto;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+    .form-control {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+    }
+    .form-actions {
+      display: flex;
+      gap: 10px;
+    }
+    .form-actions .btn {
+      flex-grow: 1;
+    }
+    .hidden {
+      display: none !important;
+    }
+  </style>
 </body>
 </html>
