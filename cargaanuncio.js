@@ -1,57 +1,72 @@
 // La clave para guardar el anuncio en el almacenamiento local
 const ANUNCIO_KEY = "anuncio_comunidad_suterm";
 
-const form = document.getElementById("announcementForm");
-const deleteButton = document.getElementById("annDelete");
-const resultMessage = document.getElementById("resultMessage");
+// Elementos del formulario
 const annTitleInput = document.getElementById("annTitleInput");
 const annDescInput = document.getElementById("annDescInput");
 const annImageInput = document.getElementById("annImageInput");
+const form = document.getElementById("announcementForm");
+const deleteButton = document.getElementById("annDelete");
 
-// Carga el anuncio existente al iniciar la página
-function loadAnnouncement() {
-  const savedAnuncio = localStorage.getItem(ANUNCIO_KEY);
-  if (savedAnuncio) {
-    const anuncio = JSON.parse(savedAnuncio);
-    annTitleInput.value = anuncio.title;
-    annDescInput.value = anuncio.description;
-    // Puesto que no podemos guardar archivos en localStorage, solo la URL
-    // Mantenemos este campo vacío para que el usuario pueda pegar la URL
-    // si lo necesita.
-    annImageInput.value = anuncio.image;
+// Elementos de la vista previa
+const previewElement = document.getElementById("announcementPreview");
+const previewTitle = document.getElementById("previewTitle");
+const previewDescription = document.getElementById("previewDescription");
+const previewImage = document.getElementById("previewImage");
+
+// Función para actualizar la vista previa en tiempo real
+function updatePreview() {
+  previewTitle.textContent = annTitleInput.value;
+  previewDescription.textContent = annDescInput.value;
+
+  if (annImageInput.files.length > 0) {
+    const file = annImageInput.files[0];
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      previewImage.src = e.target.result;
+      previewElement.classList.remove("hidden");
+    };
+    reader.readAsDataURL(file);
+  } else {
+    previewImage.src = "";
+  }
+
+  // Ocultar la vista previa si no hay nada en el formulario
+  if (!annTitleInput.value && !annDescInput.value && annImageInput.files.length === 0) {
+    previewElement.classList.add("hidden");
+  } else {
+    previewElement.classList.remove("hidden");
   }
 }
 
-// Guarda el anuncio en el almacenamiento local
+// Escuchamos los cambios en los campos para actualizar la vista previa
+annTitleInput.addEventListener("input", updatePreview);
+annDescInput.addEventListener("input", updatePreview);
+annImageInput.addEventListener("change", updatePreview);
+
+// Función para guardar el anuncio en el almacenamiento local
 form.addEventListener("submit", (e) => {
   e.preventDefault();
-
-  // El URL de la imagen se obtiene del input de archivo
-  // Si el usuario no selecciona un archivo, o el archivo es local, no se guardará.
-  // La mejor práctica es que el usuario pegue la URL de una imagen en línea.
-  const imageUrl = annImageInput.files.length > 0 ? "" : annImageInput.value;
 
   const anuncio = {
     title: annTitleInput.value,
     description: annDescInput.value,
-    image: imageUrl,
+    image: previewImage.src,
   };
 
   localStorage.setItem(ANUNCIO_KEY, JSON.stringify(anuncio));
-  resultMessage.textContent = "¡El anuncio se ha guardado exitosamente!";
-  resultMessage.classList.remove("hidden");
+  alert("El anuncio se ha guardado correctamente. Ahora puedes ver la vista previa en la misma página y el anuncio en la página de inicio.");
 });
 
-// Elimina el anuncio del almacenamiento local
+// Función para eliminar el anuncio del almacenamiento local
 deleteButton.addEventListener("click", () => {
   if (confirm("¿Estás seguro de que deseas eliminar el anuncio?")) {
     localStorage.removeItem(ANUNCIO_KEY);
     annTitleInput.value = "";
     annDescInput.value = "";
     annImageInput.value = "";
-    resultMessage.textContent = "El anuncio se ha eliminado.";
-    resultMessage.classList.remove("hidden");
+    previewImage.src = "";
+    previewElement.classList.add("hidden");
+    alert("El anuncio se ha eliminado.");
   }
 });
-
-document.addEventListener("DOMContentLoaded", loadAnnouncement);
