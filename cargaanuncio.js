@@ -24,7 +24,6 @@ function updatePreview() {
     const reader = new FileReader();
     reader.onload = (e) => {
       previewImage.src = e.target.result;
-      previewElement.classList.remove("hidden");
     };
     reader.readAsDataURL(file);
   } else {
