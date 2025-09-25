@@ -5,6 +5,40 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Comunidad SUTERM — Cargar Anuncio</title>
   <link rel="stylesheet" href="style.css">
+  <style>
+    .announcements-form-section {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 20px;
+      max-width: 600px;
+      margin: 24px auto;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+    .form-control {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+    }
+    .form-actions {
+      display: flex;
+      gap: 10px;
+    }
+    .form-actions .btn {
+      flex-grow: 1;
+    }
+    .hidden {
+      display: none !important;
+    }
+  </style>
 </head>
 <body>
 
@@ -40,8 +74,7 @@
     </section>
 
     <div id="resultMessage" class="hidden" style="margin-top: 20px; text-align: center;">
-      <p>¡Listo! Haz clic en el siguiente enlace para guardar el anuncio.</p>
-      <a id="sheetLink" class="btn btn-sm" href="#" target="_blank" style="margin-top: 10px;">Abrir Google Form</a>
+      <p>¡El anuncio se ha guardado exitosamente!</p>
     </div>
 
   </main>
@@ -51,39 +84,5 @@
   </footer>
 
   <script src="cargaanuncio.js" defer></script>
-  <style>
-    .announcements-form-section {
-      background: #fff;
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 20px;
-      max-width: 600px;
-      margin: 24px auto;
-    }
-    .form-group {
-      margin-bottom: 15px;
-    }
-    .form-group label {
-      display: block;
-      font-weight: 600;
-      margin-bottom: 5px;
-    }
-    .form-control {
-      width: 100%;
-      padding: 8px;
-      border: 1px solid var(--line);
-      border-radius: 6px;
-    }
-    .form-actions {
-      display: flex;
-      gap: 10px;
-    }
-    .form-actions .btn {
-      flex-grow: 1;
-    }
-    .hidden {
-      display: none !important;
-    }
-  </style>
 </body>
 </html>
