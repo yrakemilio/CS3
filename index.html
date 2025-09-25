@@ -94,7 +94,7 @@ Al acceder y utilizar esta plataforma, usted reconoce y acepta que cualquier acc
       </div>
 
       <div id="announcementList" class="announcement-list">
-        </div>
+      </div>
       <div id="noAnnouncements" class="no-announcement hidden">
         <p>No hay anuncios para mostrar.</p>
       </div>
@@ -102,4 +102,56 @@ Al acceder y utilizar esta plataforma, usted reconoce y acepta que cualquier acc
     </section>
 
     <div class="content-main">
-      <section class
+      <section class="search-bar">
+        <div class="search-row">
+          <input id="q" type="search" placeholder="Buscar por nombre o descripción…" autocomplete="off" />
+          <button id="btnBuscar" class="btn">Buscar</button>
+        </div>
+        <div class="filters">
+          <div class="filter">
+            <label for="seccion">Sección</label>
+            <select id="seccion"><option value="">Todas</option></select>
+          </div>
+          <div class="filter">
+            <label for="ciudad">Ciudad</label>
+            <select id="ciudad"><option value="">Todas</option></select>
+          </div>
+          <div class="filter">
+            <label for="categoria">Categoría</label>
+            <select id="categoria"><option value="">Todas</option></select>
+          </div>
+        </div>
+      </section>
+
+      <section class="states" aria-live="polite">
+        <div id="loading" class="hidden">Cargando…</div>
+        <div id="empty">Empieza buscando o usando los filtros.</div>
+        <div id="noResults" class="hidden">No se encontraron resultados.</div>
+        <div id="error" class="hidden">Error al cargar los datos.</div>
+      </section>
+
+      <section class="results" id="results"></section>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container"><small>© Comunidad SUTERM</small></div>
+  </footer>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const ANUNCIO_KEY = "anuncio_comunidad_suterm";
+      const savedAnuncio = localStorage.getItem(ANUNCIO_KEY);
+      const displayElement = document.getElementById("announcementDisplay");
+
+      if (savedAnuncio) {
+        const anuncio = JSON.parse(savedAnuncio);
+        document.getElementById("announcementTitle").textContent = anuncio.title;
+        document.getElementById("announcementDescription").textContent = anuncio.description;
+        document.getElementById("announcementImage").src = anuncio.image;
+        displayElement.classList.remove("hidden");
+      }
+    });
+  </script>
+</body>
+</html>
