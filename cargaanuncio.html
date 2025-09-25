@@ -38,6 +38,28 @@
     .hidden {
       display: none !important;
     }
+    .announcement-list {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-width: 600px;
+      margin: 24px auto;
+      text-align: left;
+    }
+    .announcement-list h3 {
+      margin: 0;
+      font-size: 1.2rem;
+    }
+    .announcement-list p {
+      margin: 0;
+      color: #374151;
+      font-size: 1rem;
+      line-height: 1.4;
+    }
   </style>
 </head>
 <body>
@@ -73,10 +95,13 @@
       </form>
     </section>
 
-    <div id="resultMessage" class="hidden" style="margin-top: 20px; text-align: center;">
-      <p>¡El anuncio se ha guardado exitosamente!</p>
+    <div id="announcementPreview" class="announcement-list hidden">
+      <h3>Vista previa</h3>
+      <h4 id="previewTitle"></h4>
+      <p id="previewDescription"></p>
+      <img id="previewImage" src="" alt="Vista previa de la imagen" style="max-width:100%; height:auto; border-radius:8px;">
     </div>
-
+    
   </main>
 
   <footer class="site-footer">
