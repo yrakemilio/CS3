@@ -63,8 +63,9 @@
           <textarea id="annDescInput" class="form-control" rows="3" required></textarea>
         </div>
         <div class="form-group">
-          <label for="annImageInput">Imagen (URL)</label>
-          <input type="url" id="annImageInput" class="form-control" placeholder="Ej: https://ejemplo.com/imagen.jpg">
+          <label for="annImageInput">Imagen</label>
+          <input type="file" id="annImageInput" accept="image/*" class="form-control">
+          <p style="font-size: 0.8rem; color: #666; margin-top: 5px;">*Para que la imagen se guarde, debes pegar una URL después de seleccionar un archivo.</p>
         </div>
         <div class="form-actions">
           <button type="submit" class="btn btn-sm">Guardar Anuncio</button>
