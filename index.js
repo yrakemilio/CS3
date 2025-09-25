@@ -66,7 +66,8 @@ function renderCards(list) {
       </div>
     </a>
   `).join("");
-  $("#results").innerHTML = html;
+  const resultsEl = $("#results");
+  if (resultsEl) resultsEl.innerHTML = html;
 }
 
 function populateFilters() {
@@ -76,7 +77,9 @@ function populateFilters() {
 
   const renderOptions = (items, id) => {
     const selector = $(`#${id}`);
-    selector.innerHTML = `<option value="">Todas</option>` + items.map(item => `<option value="${item}">${item}</option>`).join("");
+    if (selector) {
+      selector.innerHTML = `<option value="">Todas</option>` + items.map(item => `<option value="${item}">${item}</option>`).join("");
+    }
   };
 
   renderOptions(secciones, "seccion");
@@ -101,10 +104,9 @@ function applyFilters() {
   renderCards(list);
 }
 
-// Function to render announcements
 function renderAnnouncements() {
   const announcementCards = $("#announcementCards");
-  if (announcementCards) { // Se asegura de que el elemento exista antes de intentar renderizar
+  if (announcementCards) {
     announcementCards.innerHTML = ANNOUNCEMENTS.map(announcement => `
       <div class="announcement-card">
         <div class="announcement-media">
@@ -114,21 +116,8 @@ function renderAnnouncements() {
           <h4>${announcement.title}</h4>
           <p>${announcement.description}</p>
         </div>
-        <div class="announcement-actions">
-          <button class="delete-btn" data-id="${announcement.id}">Eliminar</button>
-        </div>
       </div>
     `).join("");
-
-    // Attach event listeners to delete buttons
-    $$(".delete-btn").forEach(btn => {
-      btn.addEventListener("click", async (e) => {
-        const id = e.target.dataset.id;
-        if (confirm("¿Estás seguro de que quieres eliminar este anuncio?")) {
-          await deleteAnnouncement(id);
-        }
-      });
-    });
   }
 }
 
@@ -194,7 +183,7 @@ async function loadData() {
   }
 }
 
-// Initializing Firebase
+// Inicializar Firebase y cargar datos al inicio
 document.addEventListener("DOMContentLoaded", async () => {
   const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
   const app = initializeApp(firebaseConfig);
@@ -223,59 +212,55 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   });
 
-  loadData();
-});
-
-// Event listeners for index.html (solo si existen)
-const btnBuscar = $("#btnBuscar");
-if (btnBuscar) {
-  btnBuscar.addEventListener("click", () => {
-    FILTERS.q = $("#q").value;
-    applyFilters();
-  });
-}
-
-const qInput = $("#q");
-if (qInput) {
-  qInput.addEventListener("keypress", (e) => {
-    if (e.key === "Enter") {
-      FILTERS.q = $("#q").value;
-      applyFilters();
+  if (document.title.includes("Directorio")) {
+    loadData();
+    const btnBuscar = $("#btnBuscar");
+    if (btnBuscar) {
+      btnBuscar.addEventListener("click", () => {
+        FILTERS.q = $("#q").value;
+        applyFilters();
+      });
     }
-  });
-}
+    const qInput = $("#q");
+    if (qInput) {
+      qInput.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") {
+          FILTERS.q = $("#q").value;
+          applyFilters();
+        }
+      });
+    }
+    const seccionSelect = $("#seccion");
+    if (seccionSelect) {
+      seccionSelect.addEventListener("change", (e) => {
+        FILTERS.seccion = e.target.value;
+        applyFilters();
+      });
+    }
+    const ciudadSelect = $("#ciudad");
+    if (ciudadSelect) {
+      ciudadSelect.addEventListener("change", (e) => {
+        FILTERS.ciudad = e.target.value;
+        applyFilters();
+      });
+    }
+    const categoriaSelect = $("#categoria");
+    if (categoriaSelect) {
+      categoriaSelect.addEventListener("change", (e) => {
+        FILTERS.categoria = e.target.value;
+        applyFilters();
+      });
+    }
+  }
 
-const seccionSelect = $("#seccion");
-if (seccionSelect) {
-  seccionSelect.addEventListener("change", (e) => {
-    FILTERS.seccion = e.target.value;
-    applyFilters();
-  });
-}
-
-const ciudadSelect = $("#ciudad");
-if (ciudadSelect) {
-  ciudadSelect.addEventListener("change", (e) => {
-    FILTERS.ciudad = e.target.value;
-    applyFilters();
-  });
-}
-
-const categoriaSelect = $("#categoria");
-if (categoriaSelect) {
-  categoriaSelect.addEventListener("change", (e) => {
-    FILTERS.categoria = e.target.value;
-    applyFilters();
-  });
-}
-
-// Event listeners para cargaanuncio.html (solo si existen)
-const saveBtn = $("#saveAnnouncementBtn");
-if (saveBtn) {
-  saveBtn.addEventListener("click", saveAnnouncement);
-}
-
-const clearBtn = $("#clearAnnouncementBtn");
-if (clearBtn) {
-  clearBtn.addEventListener("click", clearForm);
-}
+  if (document.title.includes("Subir Anuncio")) {
+    const saveBtn = $("#saveAnnouncementBtn");
+    if (saveBtn) {
+      saveBtn.addEventListener("click", saveAnnouncement);
+    }
+    const clearBtn = $("#clearAnnouncementBtn");
+    if (clearBtn) {
+      clearBtn.addEventListener("click", clearForm);
+    }
+  }
+});
