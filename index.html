@@ -87,6 +87,12 @@ Al acceder y utilizar esta plataforma, usted reconoce y acepta que cualquier acc
         </div>
       </form>
 
+      <div id="announcementDisplay" class="announcement-list hidden">
+        <h3 id="announcementTitle"></h3>
+        <p id="announcementDescription"></p>
+        <img id="announcementImage" src="" alt="Imagen del anuncio" style="max-width:100%; height:auto; border-radius:8px;">
+      </div>
+
       <div id="announcementList" class="announcement-list">
         </div>
       <div id="noAnnouncements" class="no-announcement hidden">
@@ -96,41 +102,4 @@ Al acceder y utilizar esta plataforma, usted reconoce y acepta que cualquier acc
     </section>
 
     <div class="content-main">
-      <section class="search-bar">
-        <div class="search-row">
-          <input id="q" type="search" placeholder="Buscar por nombre o descripción…" autocomplete="off" />
-          <button id="btnBuscar" class="btn">Buscar</button>
-        </div>
-        <div class="filters">
-          <div class="filter">
-            <label for="seccion">Sección</label>
-            <select id="seccion"><option value="">Todas</option></select>
-          </div>
-          <div class="filter">
-            <label for="ciudad">Ciudad</label>
-            <select id="ciudad"><option value="">Todas</option></select>
-          </div>
-          <div class="filter">
-            <label for="categoria">Categoría</label>
-            <select id="categoria"><option value="">Todas</option></select>
-          </div>
-        </div>
-      </section>
-
-      <section class="states" aria-live="polite">
-        <div id="loading" class="hidden">Cargando…</div>
-        <div id="empty">Empieza buscando o usando los filtros.</div>
-        <div id="noResults" class="hidden">No se encontraron resultados.</div>
-        <div id="error" class="hidden">Error al cargar los datos.</div>
-      </section>
-
-      <section class="results" id="results"></section>
-    </div>
-  </main>
-
-  <footer class="site-footer">
-    <div class="container"><small>© Comunidad SUTERM</small></div>
-  </footer>
-
-</body>
-</html>
+      <section class
