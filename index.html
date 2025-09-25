@@ -37,12 +37,19 @@
       transition: filter 0.2s;
     }
     .legal-box button:hover { filter: brightness(1.05); }
-    /* Nuevos estilos para centrar el título y justificar la descripción del anuncio */
-    #announcementTitle {
-      text-align: center;
+
+    /* Estilos para el encabezado y la barra de búsqueda fijos */
+    .top-fixed {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: var(--bg);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
-    #announcementDescription {
-      text-align: justify;
+    .content-fixed-padding {
+      padding-top: 155px; /* Ajustar este valor según la altura de la barra fija */
     }
   </style>
 </head>
@@ -64,14 +71,37 @@ Al acceder y utilizar esta plataforma, usted reconoce y acepta que cualquier acc
     </div>
   </div>
 
-  <header class="site-header">
-    <div class="container">
-      <h1 class="app-title">COMUNIDAD SUTERM</h1>
-      <p class="app-subtitle">Negocio de SUTERMISTAS para SUTERMISTAS</p>
-    </div>
-  </header>
+  <div class="top-fixed">
+    <header class="site-header">
+      <div class="container">
+        <h1 class="app-title">COMUNIDAD SUTERM</h1>
+        <p class="app-subtitle">Negocio de SUTERMISTAS para SUTERMISTAS</p>
+      </div>
+    </header>
 
-  <main class="container main-content">
+    <section class="search-bar">
+      <div class="search-row">
+        <input id="q" type="search" placeholder="Buscar por nombre o descripción…" autocomplete="off" />
+        <button id="btnBuscar" class="btn">Buscar</button>
+      </div>
+      <div class="filters">
+        <div class="filter">
+          <label for="seccion">Sección</label>
+          <select id="seccion"><option value="">Todas</option></select>
+        </div>
+        <div class="filter">
+          <label for="ciudad">Ciudad</label>
+          <select id="ciudad"><option value="">Todas</option></select>
+        </div>
+        <div class="filter">
+          <label for="categoria">Categoría</label>
+          <select id="categoria"><option value="">Todas</option></select>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <main class="container main-content content-fixed-padding">
     <section class="announcements-sidebar">
       <h2 class="section-title">Anuncios</h2>
       
@@ -90,27 +120,6 @@ Al acceder y utilizar esta plataforma, usted reconoce y acepta que cualquier acc
     </section>
 
     <div class="content-main">
-      <section class="search-bar">
-        <div class="search-row">
-          <input id="q" type="search" placeholder="Buscar por nombre o descripción…" autocomplete="off" />
-          <button id="btnBuscar" class="btn">Buscar</button>
-        </div>
-        <div class="filters">
-          <div class="filter">
-            <label for="seccion">Sección</label>
-            <select id="seccion"><option value="">Todas</option></select>
-          </div>
-          <div class="filter">
-            <label for="ciudad">Ciudad</label>
-            <select id="ciudad"><option value="">Todas</option></select>
-          </div>
-          <div class="filter">
-            <label for="categoria">Categoría</label>
-            <select id="categoria"><option value="">Todas</option></select>
-          </div>
-        </div>
-      </section>
-
       <section class="states" aria-live="polite">
         <div id="loading" class="hidden">Cargando…</div>
         <div id="empty">Empieza buscando o usando los filtros.</div>
