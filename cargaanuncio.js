@@ -15,6 +15,9 @@ function loadAnnouncement() {
     const anuncio = JSON.parse(savedAnuncio);
     annTitleInput.value = anuncio.title;
     annDescInput.value = anuncio.description;
+    // Puesto que no podemos guardar archivos en localStorage, solo la URL
+    // Mantenemos este campo vacío para que el usuario pueda pegar la URL
+    // si lo necesita.
     annImageInput.value = anuncio.image;
   }
 }
@@ -23,10 +26,15 @@ function loadAnnouncement() {
 form.addEventListener("submit", (e) => {
   e.preventDefault();
 
+  // El URL de la imagen se obtiene del input de archivo
+  // Si el usuario no selecciona un archivo, o el archivo es local, no se guardará.
+  // La mejor práctica es que el usuario pegue la URL de una imagen en línea.
+  const imageUrl = annImageInput.files.length > 0 ? "" : annImageInput.value;
+
   const anuncio = {
     title: annTitleInput.value,
     description: annDescInput.value,
-    image: annImageInput.value,
+    image: imageUrl,
   };
 
   localStorage.setItem(ANUNCIO_KEY, JSON.stringify(anuncio));
