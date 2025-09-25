@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Comunidad SUTERM — Directorio</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="index.js" defer></script>
+  <style>
+    /* Modal legal */
+    .legal-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+    .legal-box {
+      background: #fff;
+      padding: 20px;
+      max-width: 500px;
+      border-radius: 12px;
+      text-align: center;
+    }
+    .legal-box h2 { margin-top: 0; }
+    .legal-box button {
+      margin-top: 12px;
+      padding: 10px 18px;
+      border: none;
+      border-radius: 8px;
+      background: var(--cta);
+      color: var(--cta-ink);
+      font-weight: 600;
+      cursor: pointer;
+      transition: filter 0.2s;
+    }
+    .legal-box button:hover { filter: brightness(1.05); }
+  </style>
+</head>
+<body>
+
+  <div id="legalNotice" class="legal-modal">
+    <div class="legal-box">
+      <h2>⚠️ Aviso de Deslinde de responsabilidad </h2>
+      <p>
+        La Comunidad SUTERM, así como el Sindicato Único de Trabajadores Electricistas de la República Mexicana (SUTERM), actúan únicamente como plataformas de promoción y difusión de los negocios, servicios y actividades de sus agremiados.
+
+Se deslindan expresamente de cualquier responsabilidad legal, fiscal, civil o penal que pueda derivarse del uso, contratación, adquisición o consumo de los productos y servicios ofrecidos por los agremiados a través de esta comunidad.
+
+Toda relación comercial, contractual o transacción que se lleve a cabo entre los usuarios y los agremiados es estrictamente responsabilidad de las partes involucradas. La Comunidad SUTERM y el SUTERM no garantizan la legalidad, calidad, seguridad, cumplimiento fiscal ni cumplimiento normativo de los negocios promocionados.
+
+Al acceder y utilizar esta plataforma, usted reconoce y acepta que cualquier acción relacionada con los productos o servicios ofrecidos por los agremiados se realiza bajo su propio riesgo y responsabilidad, eximiendo a la Comunidad SUTERM y al SUTERM de cualquier reclamación, demanda o contingencia legal.
+      </p>
+      <button id="closeNotice">Aceptar</button>
+    </div>
+  </div>
+
+  <header class="site-header">
+    <div class="container">
+      <h1 class="app-title">COMUNIDAD SUTERM</h1>
+      <p class="app-subtitle">Negocio de SUTERMISTAS para SUTERMISTAS</p>
+    </div>
+  </header>
+
+  <main class="container main-content">
+    <section class="announcements-sidebar">
+      <h2 class="section-title">Anuncios</h2>
+      
+      <form id="announcementForm" class="announcement-form">
+        <div class="form-group">
+          <label for="annTitleInput">Título del anuncio</label>
+          <input type="text" id="annTitleInput" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label for="annDescInput">Descripción</label>
+          <textarea id="annDescInput" class="form-control" rows="3" required></textarea>
+        </div>
+        <div class="form-group">
+          <label for="annImageInput">Imagen (opcional)</label>
+          <input type="file" id="annImageInput" accept="image/*" class="form-control">
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-sm">Guardar Anuncio</button>
+          <button type="button" id="annDelete" class="btn btn-sm btn-danger">Eliminar</button>
+        </div>
+      </form>
+
+      <div id="announcementList" class="announcement-list">
+        </div>
+      <div id="noAnnouncements" class="no-announcement hidden">
+        <p>No hay anuncios para mostrar.</p>
+      </div>
+
+    </section>
+
+    <div class="content-main">
+      <section class="search-bar">
+        <div class="search-row">
+          <input id="q" type="search" placeholder="Buscar por nombre o descripción…" autocomplete="off" />
+          <button id="btnBuscar" class="btn">Buscar</button>
+        </div>
+        <div class="filters">
+          <div class="filter">
+            <label for="seccion">Sección</label>
+            <select id="seccion"><option value="">Todas</option></select>
+          </div>
+          <div class="filter">
+            <label for="ciudad">Ciudad</label>
+            <select id="ciudad"><option value="">Todas</option></select>
+          </div>
+          <div class="filter">
+            <label for="categoria">Categoría</label>
+            <select id="categoria"><option value="">Todas</option></select>
+          </div>
+        </div>
+      </section>
+
+      <section class="states" aria-live="polite">
+        <div id="loading" class="hidden">Cargando…</div>
+        <div id="empty">Empieza buscando o usando los filtros.</div>
+        <div id="noResults" class="hidden">No se encontraron resultados.</div>
+        <div id="error" class="hidden">Error al cargar los datos.</div>
+      </section>
+
+      <section class="results" id="results"></section>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container"><small>© Comunidad SUTERM</small></div>
+  </footer>
+
+</body>
+</html>
