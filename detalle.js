@@ -25,39 +25,50 @@ function parseCSV(text) {
 
   for (let i = 0; i < text.length; i++) {
     const c = text[i];
-    if (c === '\"') {
-      if (inQ && text[i + 1] === '\"') {
-        cur += '\"';
+    if (c === '"') {
+      if (inQ && text[i + 1] === '"') {
+        cur += '"';
         i++;
       } else inQ = !inQ;
     } else if (c === ',' && !inQ) {
       pushCell();
     } else if ((c === '\n' || c === '\r') && !inQ) {
-      if (c === '\r' && text[i + 1] === '\n') {
-        i++;
-      }
+      if (c === '\r' && text[i + 1] === '\n') i++;
       pushCell();
       pushRow();
     } else {
       cur += c;
     }
   }
-  pushCell();
-  pushRow();
+  if (cur.length || row.length) {
+    pushCell();
+    pushRow();
+  }
 
-  const [headers, ...data] = rows;
-  return data.map(d => Object.fromEntries(headers.map((h, i) => [h, d[i]])));
+  if (!rows.length) return [];
+  const headers = rows.shift().map(h => String(h || '').trim().toLowerCase());
+  return rows
+    .filter(r => r.some(c => String(c || '').trim() !== ''))
+    .map((r, i) => {
+      const o = {};
+      headers.forEach((h, idx) => o[h] = String(r[idx] || '').trim());
+      if (!o.id) o.id = i + 1;
+      return o;
+    });
 }
 
-function renderDetail(row) {
-  const meta = [row.categoria, row.ciudad, row.seccion].filter(Boolean).join(" • ");
-  
+function renderDetails(row) {
+  if (!row) {
+    $("#detailLoading").classList.add("hidden");
+    $("#detailError").classList.remove("hidden");
+    return;
+  }
   $("#detailLogo").src = row.logo || "";
-  $("#detailName").textContent = row.negocio || "Sin nombre";
-  $("#detailMeta").textContent = meta;
+  $("#detailName").textContent = row.nombre || "Sin nombre";
+  $("#detailMeta").textContent = [row.categoria, row.ciudad, row.seccion].filter(Boolean).join(" • ");
   $("#detailDesc").textContent = row.descripcion || "Sin descripción";
 
-  // Botón 1: WhatsApp (sin cambios)
+  // Botón 1: WhatsApp
   if (row.whatsapp) $("#btnWhatsApp").href = `https://wa.me/${row.whatsapp}`;
 
   // Botón 2: Web / Contacto
@@ -94,15 +105,11 @@ async function load() {
     const res = await fetch(SHEET_CSV_URL);
     const text = await res.text();
     const data = parseCSV(text);
-    const row = data.find(d => d.id === id);
-
-    if (row) {
-      renderDetail(row);
-    } else {
-      $("#detailError").classList.remove("hidden");
-    }
-  } catch (err) {
-    console.error("Error al cargar los datos:", err);
+    const row = data.find(d => d.id == id);
+    renderDetails(row);
+  } catch (e) {
+    console.error(e);
+    $("#detailLoading").classList.add("hidden");
     $("#detailError").classList.remove("hidden");
   }
 }
