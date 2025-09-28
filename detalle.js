@@ -25,47 +25,37 @@ function parseCSV(text) {
 
   for (let i = 0; i < text.length; i++) {
     const c = text[i];
-    if (c === '"') {
-      if (inQ && text[i + 1] === '"') {
-        cur += '"';
+    if (c === '\"') {
+      if (inQ && text[i + 1] === '\"') {
+        cur += '\"';
         i++;
       } else inQ = !inQ;
     } else if (c === ',' && !inQ) {
       pushCell();
     } else if ((c === '\n' || c === '\r') && !inQ) {
-      if (c === '\r' && text[i + 1] === '\n') i++;
+      if (c === '\r' && text[i + 1] === '\n') {
+        i++;
+      }
       pushCell();
       pushRow();
     } else {
       cur += c;
     }
   }
-  if (cur.length || row.length) {
-    pushCell();
-    pushRow();
-  }
+  pushCell();
+  pushRow();
 
-  if (!rows.length) return [];
-  const headers = rows.shift().map(h => String(h || '').trim().toLowerCase());
-  return rows
-    .filter(r => r.some(c => String(c || '').trim() !== ''))
-    .map((r, i) => {
-      const o = {};
-      headers.forEach((h, idx) => o[h] = String(r[idx] || '').trim());
-      if (!o.id) o.id = i + 1;
-      return o;
-    });
+  const [headers, ...data] = rows;
+  return data.map(d => Object.fromEntries(headers.map((h, i) => [h, d[i]])));
 }
 
-function renderDetails(row) {
-  if (!row) {
-    $("#detailLoading").classList.add("hidden");
-    $("#detailError").classList.remove("hidden");
-    return;
-  }
+
+function renderDetail(row) {
+  const meta = [row.categoria, row.ciudad, row.seccion].filter(Boolean).join(" • ");
+  
   $("#detailLogo").src = row.logo || "";
-  $("#detailName").textContent = row.nombre || "Sin nombre";
-  $("#detailMeta").textContent = [row.categoria, row.ciudad, row.seccion].filter(Boolean).join(" • ");
+  $("#detailName").textContent = row.negocio || "Sin nombre";
+  $("#detailMeta").textContent = meta;
   $("#detailDesc").textContent = row.descripcion || "Sin descripción";
 
   // Botón 1: WhatsApp (sin cambios)
@@ -83,8 +73,14 @@ function renderDetails(row) {
     webBtn.classList.add("hidden");
   }
 
+  // Galería de imágenes y video
   const imgs = [row.imagen1, row.imagen2, row.imagen3, row.imagen4, row.imagen5].filter(Boolean);
-  $("#detailGallery").innerHTML = imgs.map((src, i) => `<img src="${src}" alt="Foto ${i+1}">`).join("");
+  const videoSrc = row.video;
+  
+  const videoHtml = videoSrc ? `<iframe class="video-container" src="${videoSrc}" frameborder="0" allowfullscreen></iframe>` : '';
+  
+  $("#detailGallery").innerHTML = imgs.map((src, i) => `<img src="${src}" alt="Foto ${i+1}">`).join("") + videoHtml;
+
   $("#detailLoading").classList.add("hidden");
   $("#detail").classList.remove("hidden");
 }
@@ -99,11 +95,15 @@ async function load() {
     const res = await fetch(SHEET_CSV_URL);
     const text = await res.text();
     const data = parseCSV(text);
-    const row = data.find(d => d.id == id);
-    renderDetails(row);
-  } catch (e) {
-    console.error(e);
-    $("#detailLoading").classList.add("hidden");
+    const row = data.find(d => d.id === id);
+
+    if (row) {
+      renderDetail(row);
+    } else {
+      $("#detailError").classList.remove("hidden");
+    }
+  } catch (err) {
+    console.error("Error al cargar los datos:", err);
     $("#detailError").classList.remove("hidden");
   }
 }
