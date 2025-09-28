@@ -49,7 +49,6 @@ function parseCSV(text) {
   return data.map(d => Object.fromEntries(headers.map((h, i) => [h, d[i]])));
 }
 
-
 function renderDetail(row) {
   const meta = [row.categoria, row.ciudad, row.seccion].filter(Boolean).join(" • ");
   
@@ -62,14 +61,12 @@ function renderDetail(row) {
   if (row.whatsapp) $("#btnWhatsApp").href = `https://wa.me/${row.whatsapp}`;
 
   // Botón 2: Web / Contacto
-  // Ahora el texto viene de la columna `descuento` de la hoja.
   const webBtn = $("#btnWeb");
   if (row.pagina && row.pagina.trim() !== "") {
     webBtn.href = row.pagina;
     webBtn.textContent = row.descuento && row.descuento.trim() !== "" ? row.descuento : "Visitar sitio";
     webBtn.classList.remove("hidden");
   } else {
-    // Si no hay URL, ocultamos el botón para evitar href="#"
     webBtn.classList.add("hidden");
   }
 
@@ -79,7 +76,9 @@ function renderDetail(row) {
   
   const videoHtml = videoSrc ? `<iframe class="video-container" src="${videoSrc}" frameborder="0" allowfullscreen></iframe>` : '';
   
-  $("#detailGallery").innerHTML = imgs.map((src, i) => `<img src="${src}" alt="Foto ${i+1}">`).join("") + videoHtml;
+  const galleryHtml = imgs.map((src, i) => `<img src="${src}" alt="Foto ${i+1}">`).join("") + videoHtml;
+  
+  $("#detailGallery").innerHTML = galleryHtml;
 
   $("#detailLoading").classList.add("hidden");
   $("#detail").classList.remove("hidden");
